@@ -1,4 +1,4 @@
-name: DevSecOps Workflow for MyVodafoneApp
+name: DevSecOps1 Workflow for MyVodafoneApp
 on: [push]
 jobs:
   build:
