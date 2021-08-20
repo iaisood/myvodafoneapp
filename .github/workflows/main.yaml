@@ -60,18 +60,18 @@ jobs:
           path: safety-output.json
         if: always()
 
-npm audit:
+  oast-npmscan:
     runs-on: ubuntu-latest
     needs: test
     steps:
       - name: Clone the Repository
         uses: actions/checkout@v2
 
-      - name: Install Safety
-      run:  install npm
+      - name: Install Node Modules
+        run: npm install
 
-      - name: run npm audit
-       run: npm audit --json | tee npmaudit-output.json
+      - name: run npm Audit
+        run: npm audit --json | tee npmaudit-output.json
         continue-on-error: true
       
       - name: Upload the Safety Output file
@@ -81,9 +81,10 @@ npm audit:
           path: npmaudit-output.json
         if: always()
 
+
   deployment:
     runs-on: ubuntu-latest
-    needs: oast-retire
+    needs: [oast-retire, oast-safety, oast-npmscan]
     steps:
       - run: |
           echo "deployment Job is going on"
