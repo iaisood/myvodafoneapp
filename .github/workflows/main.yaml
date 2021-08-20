@@ -80,30 +80,31 @@ jobs:
           name: NPMAudit-Output-file
           path: npmaudit-output.json
         if: always()
-cast-truffle:
+
+  sast-trufflehog:
     runs-on: ubuntu-latest
-    needs: test
+    needs: [oast-retire, oast-safety, oast-npmscan]
     steps:
       - name: Clone the Repository
         uses: actions/checkout@v2
 
       - name: Install trufflehog
-        run: pip install trufflehog
+        run: pip install trufflehog3
 
-      - name: run npm Audit
-        run: trufflehog --json . | tee trufflehog-output.json
+      - name: run trufflehog scan
+        run: trufflehog3 --no-history --format json --output trufflehog-output.json
         continue-on-error: true
       
       - name: Upload the Safety Output file
         uses: actions/upload-artifact@v2
         with:
           name: trufflehog-Output-file
-          path: npmaudit-output.json
+          path: trufflehog-output.json
         if: always()
 
   deployment:
     runs-on: ubuntu-latest
-    needs: [oast-retire, oast-safety, oast-npmscan, cast-truffle]
+    needs: sast-trufflehog
     steps:
       - run: |
           echo "deployment Job is going on"
